@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -18,9 +18,7 @@ import Link from '@material-ui/core/Link';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import NotificationsIcon from '@material-ui/icons/Notifications';
-import { mainListItems, secondaryListItems } from './listItems';
-import AaveChart from './AaveChart';
-import Deposits from './Deposits';
+import { secondaryListItems } from './listItems';
 import AaveTable from './AaveTable';
 import Button from "@material-ui/core/Button";
 import Card from "@material-ui/core/Card";
@@ -30,12 +28,11 @@ import CardActions from "@material-ui/core/CardActions";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
-import UniswapChart from "./UniswapChart";
-import CompoundTable from "./CompondTable";
+import AccountBalanceWalletIcon from '@material-ui/icons/AccountBalanceWallet';
 import Title from "./Title";
-import {Helmet} from "react-helmet";
-import ScriptTag from "react-script-tag";
-import UniswapTable from "./UniswapTable";
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import TextField from "@material-ui/core/TextField";
+import {FormControl, FormLabel, Radio, RadioGroup} from "@material-ui/core";
 
 function Copyright() {
     return (
@@ -55,6 +52,13 @@ const drawerWidth = 240;
 const useStyles = makeStyles((theme) => ({
     root: {
         display: 'flex',
+    },
+    form: {
+        width: '100%', // Fix IE 11 issue.
+        marginTop: theme.spacing(1),
+    },
+    submit: {
+        margin: theme.spacing(3, 0, 2),
     },
     toolbar: {
         paddingRight: 24, // keep right padding when drawer closed
@@ -173,13 +177,29 @@ export default function Dashboard() {
     const openAave = () => {
         setView("Aave");
     }
-    const openCompound = () => {
-        setView("Compound");
+    const [chainId, setChainId] = React.useState("1");
+    const [dataset, setDataset] = useState([]);
+    const [wallet, setWallet] = useState("");
+    const handleChange = (event) => {
+        setChainId(event.target.value);
+    };
+    const handleClick = (event) => {
+        fetch(`https://api.covalenthq.com/v1/${chainId}/address/${wallet}/balances_v2/?key=onemillionwallets`)
+            .then(res => res.json())
+            .then(
+                (data) => {
+                    console.log(data.data.items)
+                    setDataset(data.data.items);
+                },
+                (error) => {
+                    console.log(error)
+                }
+            )
     }
-    const openUniswap = () => {
-        setView("Uniswap");
+    const handleWallet = (event) => {
+        setWallet(event.target.value);
     }
-    const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
+
     const cards = [
         {
             index: 1,
@@ -190,17 +210,17 @@ export default function Dashboard() {
         },
         {
             index: 2,
-            image: "https://www.covalenthq.com/static/images/blog/202012/terravirtua.png",
+            image: "https://www.covalenthq.com/static/images/blog/202103/fundraising.jpg",
             heading: "Covalent Partnership Update",
-            text: "Covalent and Terra Virtua Partner to Provide Deep, Granular Data on Tokenized Collectibles",
-            link: "https://www.covalenthq.com/blog/terravirtua-partnership-announcement/"
+            text: "Covalent Closes $2 Million Strategic Funding Round to Launch its Decentralized Data Query Network",
+            link: "https://www.covalenthq.com/blog/covalent-strategic-funding-mar-2021/"
         },
         {
             index: 3,
-            image: "https://www.covalenthq.com/static/images/blog/202012/community.png",
+            image: "https://www.covalenthq.com/static/images/blog/202104/coinlist.jpg",
             heading: "Covalent Community Update",
-            text: "Covalent Community Update: November 2020",
-            link: "https://www.covalenthq.com/blog/november-2020-community-update/"
+            text: "Announcing Covalent’s CQT Community Sale and Distribution on CoinList",
+            link: "https://www.covalenthq.com/blog/coinlist-sale/"
         },
         {
             index: 4,
@@ -312,75 +332,54 @@ export default function Dashboard() {
         return (
             <div>
                 <div className={classes.appBarSpacer} />
-                <Container maxWidth="xl" className={classes.container}>
+                <Container maxWidth="lg" className={classes.container}>
                     <Grid container spacing={3}>
                         {/* Chart */}
                         <Grid item xs={12}>
                             <Paper className={classes.paper}>
-                                <AaveChart />
+                                <div>
+                                    <Title>Powered by Covalent API</Title>
+                                    <form className={classes.form} noValidate>
+                                        <TextField
+                                            value={wallet}
+                                            variant="outlined"
+                                            margin="normal"
+                                            required
+                                            fullWidth
+                                            id="wallet"
+                                            label="Wallet Address"
+                                            name="wallet"
+                                            autoComplete="wallet"
+                                            autoFocus
+                                            onChange={handleWallet}
+                                        />
+                                        <FormControl component="fieldset">
+                                            <RadioGroup row aria-label="network" name="network-radio" value={chainId} onChange={handleChange}>
+                                                <FormControlLabel value="1" control={<Radio />} label="Ethereum Mainnet" />
+                                                <FormControlLabel value="137" control={<Radio />} label="Polygon/Matic Mainnet" />
+                                                <FormControlLabel value="56" control={<Radio />} label="Binance Smart Chain" />
+                                                <FormControlLabel value="43114" control={<Radio />} label="Avalanche C-Chain Mainnet" />
+                                                <FormControlLabel value="250" control={<Radio />} label="Fantom Opera Mainnet" />
+                                            </RadioGroup>
+                                        </FormControl>
+
+                                        <Button
+                                            fullWidth
+                                            variant="contained"
+                                            color="primary"
+                                            className={classes.submit}
+                                            onClick={handleClick}
+                                        >
+                                            Check Wallet Balance
+                                        </Button>
+                                    </form>
+                                </div>
                             </Paper>
                         </Grid>
                         {/* Recent Orders */}
                         <Grid item xs={12}>
                             <Paper className={classes.paper}>
-                                <AaveTable />
-                            </Paper>
-                        </Grid>
-                    </Grid>
-                    <Box pt={4}>
-                        <Copyright />
-                    </Box>
-                </Container>
-            </div>
-        )
-    }
-    const compoundView = () => {
-        return (
-            <div>
-                <div className={classes.appBarSpacer} />
-                <Container maxWidth="xl" className={classes.container}>
-                    <Grid container spacing={3}>
-                        {/* Chart */}
-                        <Grid item lg={12}>
-                            <Paper className={classes.paper}>
-                                <div>
-                                    <Title>Today's Market</Title>
-                                    <ScriptTag type="text/javascript" src="https://jshosting.s3-us-west-2.amazonaws.com/library.js"></ScriptTag>
-                                    <div className="coinmarketcap-currency-widget" data-currencyid="5692"
-                                         data-base="USD" data-secondary="" data-ticker="true" data-rank="true"
-                                         data-marketcap="true" data-volume="true" data-statsticker="true"
-                                         data-stats="USD"></div>
-                                </div>
-                            </Paper>
-                        </Grid>
-                        <Grid item xs={12}>
-                            <Paper className={classes.paper}>
-                                <CompoundTable />
-                            </Paper>
-                        </Grid>
-                    </Grid>
-                    <Box pt={4}>
-                        <Copyright />
-                    </Box>
-                </Container>
-            </div>
-        )
-    }
-    const uniswapView = () => {
-        return (
-            <div>
-                <div className={classes.appBarSpacer} />
-                <Container maxWidth="xl" className={classes.container}>
-                    <Grid container spacing={3}>
-                        {/* Chart */}
-                        <Grid item lg={12}>
-                            <Paper className={classes.paper}>
-                                <UniswapChart/>
-                            </Paper>
-                        </Grid>
-                        <Grid item xs={12}>
-                            <Paper className={classes.paper}>
-                                <UniswapTable />
+                                <AaveTable dataset={dataset} chainId={chainId}/>
                             </Paper>
                         </Grid>
                     </Grid>
@@ -397,10 +396,6 @@ export default function Dashboard() {
             return Covalent();
         } else if (view === "Aave") {
             return aaveView();
-        } else if (view === "Compound") {
-            return compoundView();
-        } else {
-            return uniswapView();
         }
     }
 
@@ -419,7 +414,7 @@ export default function Dashboard() {
                         <MenuIcon />
                     </IconButton>
                     <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-                        Defi Dashboard Powered by Covalent
+                        Wallet Explorer Powered by Covalent
                     </Typography>
                     <IconButton color="inherit">
                         <Badge badgeContent={4} color="secondary">
@@ -451,21 +446,9 @@ export default function Dashboard() {
                         </ListItem>
                         <ListItem button onClick={openAave}>
                             <ListItemIcon>
-                                <img src="https://i.ibb.co/D7kkQ9c/aave-aave-logo.png" alt="aave-aave-logo" border="0" style={{width: '24px'}}/>
+                                <AccountBalanceWalletIcon color={"primary"} />
                             </ListItemIcon>
-                            <ListItemText primary="Aave" />
-                        </ListItem>
-                        <ListItem button onClick={openCompound}>
-                            <ListItemIcon>
-                                <img src="https://i.ibb.co/BwTBCX9/OVJu6nw-Q-400x400.png" alt="compound-logo" border="0" style={{width: '24px'}}/>
-                            </ListItemIcon>
-                            <ListItemText primary="Compound" />
-                        </ListItem>
-                        <ListItem button onClick={openUniswap}>
-                            <ListItemIcon>
-                                <img src="https://protocol-icons.s3.amazonaws.com/Uniswap.png" alt="uniswap-logo" border="0" style={{width: '24px'}}/>
-                            </ListItemIcon>
-                            <ListItemText primary="Uniswap V2" />
+                            <ListItemText primary="Wallet Explorer" />
                         </ListItem>
                     </div>
                 </List>
@@ -475,9 +458,6 @@ export default function Dashboard() {
             <main>
                 {getMainByView(view)}
             </main>
-            {/*<main className={classes.content}>*/}
-            {/*    */}
-            {/*</main>*/}
         </div>
     );
 }

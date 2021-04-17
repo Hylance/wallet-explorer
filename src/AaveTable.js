@@ -14,58 +14,43 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export default function AaveTable() {
-    const classes = useStyles();
-    const [error, setError] = useState(null);
-    const [isLoaded, setIsLoaded] = useState(false);
-    const [items, setItems] = useState([]);
-    const baseUrl = "https://etherscan.io/address/";
-    const concatUrl = (suffix) => {
-        return baseUrl + suffix
+const AaveTable = (dataset) => {
+    const explorerMap = {
+        1: "https://etherscan.io/address/",
+        137: "https://explorer-mainnet.maticvigil.com/address/",
+        56: "https://bscscan.com/address/",
+        43114: "https://cchain.explorer.avax.network/address/",
+        250: "https://explorer.fantom.network/address/"
     }
-    useEffect(() => {
-        fetch("https://api.covalenthq.com/v1/1/networks/aave/assets?key=onemillionwallets")
-            .then(res => res.json())
-            .then(
-                (data) => {
-                    setIsLoaded(true);
-                    setItems(data.data.items);
-                },
 
-                (error) => {
-                    setIsLoaded(true);
-                    setError(error);
-                }
-            )
-    }, [])
-    if (error) {
-        return <div>Error: {error.message}</div>;
-    } else if (!isLoaded) {
-        return <div>Loading...</div>;
+    const concatUrl = (suffix) => {
+        const baseUrl = explorerMap[dataset.chainId] || "";
+        return baseUrl + suffix;
+    }
+    if (!dataset || dataset.dataset.length <= 0) {
+        return null;
     } else {
         return (
             <React.Fragment>
-                <Title>Aave Dashboard</Title>
+                <Title>Wallet Details</Title>
                 <Table size="small">
                     <TableHead>
                         <TableRow>
                             <TableCell>Assets</TableCell>
                             <TableCell>Symbol</TableCell>
                             <TableCell>Price</TableCell>
-                            <TableCell>Variable Borrow APR</TableCell>
-                            <TableCell>Stable Borrow APR</TableCell>
-                            <TableCell>Deposit APY</TableCell>
+                            <TableCell>Balance</TableCell>
+                            <TableCell>Contract Address</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {items.map((item, index) => (
+                        {dataset.dataset.map((item, index) => (
                             <TableRow key={index}>
-                                <TableCell><a href={concatUrl(item.underlying.contract_address)}><img src={item.underlying.logo_url} style={{width: '30px'}}/></a></TableCell>
-                                <TableCell>{item.underlying.contract_ticker_symbol}</TableCell>
-                                <TableCell>{item.underlying.quote_rate}</TableCell>
-                                <TableCell>{item.variable_borrow_apr}</TableCell>
-                                <TableCell>{item.stable_borrow_apr}</TableCell>
-                                <TableCell>{item.supply_apy}</TableCell>
+                                <TableCell><img src={item.logo_url} style={{width: '30px'}}/></TableCell>
+                                <TableCell>{item.contract_ticker_symbol}</TableCell>
+                                <TableCell>{item.quote_rate}</TableCell>
+                                <TableCell>{item.balance / 10 ** item.contract_decimals}</TableCell>
+                                <TableCell><a href={concatUrl(item.contract_address)} target="_blank">{item.contract_address}</a></TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
@@ -74,3 +59,5 @@ export default function AaveTable() {
         );
     }
 }
+
+export default AaveTable;
