@@ -27,6 +27,12 @@ const AaveTable = (dataset) => {
         const baseUrl = explorerMap[dataset.chainId] || "";
         return baseUrl + suffix;
     }
+
+    function handleOnError(event) {
+        event.target.src = "https://i.ibb.co/LY9YB2R/covalent-logo.png";
+        console.log(event)
+    }
+
     if (!dataset || dataset.dataset.length <= 0) {
         return null;
     } else {
@@ -46,7 +52,7 @@ const AaveTable = (dataset) => {
                     <TableBody>
                         {dataset.dataset.map((item, index) => (
                             <TableRow key={index}>
-                                <TableCell><img src={item.logo_url} style={{width: '30px'}}/></TableCell>
+                                <TableCell><img src={item.logo_url} style={{width: '30px'}} onError={handleOnError}/></TableCell>
                                 <TableCell>{item.contract_ticker_symbol}</TableCell>
                                 <TableCell>{item.quote_rate}</TableCell>
                                 <TableCell>{item.balance / 10 ** item.contract_decimals}</TableCell>

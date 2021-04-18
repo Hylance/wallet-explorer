@@ -188,7 +188,6 @@ export default function Dashboard() {
             .then(res => res.json())
             .then(
                 (data) => {
-                    console.log(data.data.items)
                     setDataset(data.data.items);
                 },
                 (error) => {
@@ -414,7 +413,7 @@ export default function Dashboard() {
                         <MenuIcon />
                     </IconButton>
                     <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-                        Wallet Explorer Powered by Covalent
+                        Multi-Chain Wallet Explorer Powered by Covalent
                     </Typography>
                     <IconButton color="inherit">
                         <Badge badgeContent={4} color="secondary">
