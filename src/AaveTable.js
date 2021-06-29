@@ -17,10 +17,10 @@ const useStyles = makeStyles((theme) => ({
 const AaveTable = (dataset) => {
     const explorerMap = {
         1: "https://etherscan.io/address/",
-        137: "https://explorer-mainnet.maticvigil.com/address/",
+        137: "https://polygonscan.com/address/",
         56: "https://bscscan.com/address/",
         43114: "https://cchain.explorer.avax.network/address/",
-        250: "https://explorer.fantom.network/address/"
+        250: "https://ftmscan.com/address/"
     }
 
     const concatUrl = (suffix) => {
