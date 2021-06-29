@@ -413,7 +413,7 @@ export default function Dashboard() {
                         <MenuIcon />
                     </IconButton>
                     <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-                        Multi-Chain Wallet Explorer Powered by Covalent
+                        Multi-Chain Wallet Explorer OMW-Fantom
                     </Typography>
                     <IconButton color="inherit">
                         <Badge badgeContent={4} color="secondary">

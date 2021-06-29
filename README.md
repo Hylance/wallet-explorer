@@ -5,5 +5,4 @@ Install it and run:
 npm install
 npm start
 ```
-Demo: https://youtu.be/Bv1nbUNBb-o
-Live site: https://omw-avalanche.herokuapp.com/
+Live site: https://omw-fantom.herokuapp.com/
