@@ -184,7 +184,7 @@ export default function Dashboard() {
         setChainId(event.target.value);
     };
     const handleClick = (event) => {
-        fetch(`https://api.covalenthq.com/v1/${chainId}/address/${wallet}/balances_v2/?key=onemillionwallets`)
+        fetch(`https://api.covalenthq.com/v1/${chainId}/address/${wallet}/balances_v2/?key=ckey_2000734ae6334c75b8b44b1466e`)
             .then(res => res.json())
             .then(
                 (data) => {
