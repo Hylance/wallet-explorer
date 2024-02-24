@@ -1,7 +1,8 @@
 {
-  "name": "create-react-app",
-  "version": "4.0.0",
-  "private": true,
+  "name": "wallet-explorer",
+  "version": "1.0.0",
+  "description": "expore a crypto wallet",
+  "author": "cueeee",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
@@ -21,7 +22,7 @@
     "recharts": "^1.8.5"
   },
   "engines": {
-    "node": "12.18.2"
+    "node": "18.11.0"
   },
   "browserslist": {
     "production": [
