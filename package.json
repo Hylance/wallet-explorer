@@ -1,8 +1,12 @@
 {
   "name": "wallet-explorer",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "expore a crypto wallet",
   "author": "cueeee",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Hylance/wallet-explorer.git"
+  },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
